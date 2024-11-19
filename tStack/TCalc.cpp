@@ -109,6 +109,7 @@ bool TCalc::check(string str) {
 		else stChar.pop();
 	}
 	if (!(stChar.isEmpty())) return false;
+	return true;
 }
 void TCalc::toPostfix() {
 	postfix = "";
@@ -151,4 +152,8 @@ void TCalc::toPostfix() {
 }
 void TCalc::setInfix(string input) {
 	if (check(input)) infix = input;
+	else {
+		string err = "wrong input";
+		throw err;
+	}
 }

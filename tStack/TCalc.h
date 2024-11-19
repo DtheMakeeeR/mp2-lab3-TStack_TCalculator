@@ -1,6 +1,16 @@
 #pragma once
 #include <string>
 #include "TStack.h"
+enum Opers{
+	eadd,
+	edis,
+	esub,
+	emul,
+	ediv,
+	eleftbracket,
+	esin,
+	ecos
+};
 using namespace std;
 class TCalc {
 	string infix;
