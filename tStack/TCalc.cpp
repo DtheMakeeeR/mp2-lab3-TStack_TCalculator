@@ -1,10 +1,63 @@
 #include "TCalc.h"
 #include "TStack.h"
 #include <math.h>
+double TCalc::Calc() {
+	stNum.clear();
+	stChar.clear();
+	string tmp = '(' + infix + ')';
+	for (int i = 0; i < tmp.size(); i++) {
+		if (tmp[i] == '(') {
+			stChar.push('(');
+			if (tmp[i + 1] == '-') {
+				size_t idx;
+				double res = stod(&tmp[i + 1], &idx);
+				stNum.push(res);
+				i += idx;
+			}
+		}
+		else if (tmp[i] == '+' || tmp[i] == '-' || tmp[i] == '*'
+			|| tmp[i] == '/' || tmp[i] == '^') {
+			while (prior(stChar.top()) >= prior(tmp[i])) {
+				char a = stChar.pop();
+				double secOp = stNum.pop();
+				double frsOp = stNum.pop();
+				if (a == '+') stNum.push(secOp + frsOp);
+				if (a == '-') stNum.push(frsOp - secOp);
+				if (a == '*') stNum.push(secOp * frsOp);
+				if (a == '/') stNum.push(frsOp / secOp);
+				if (a == '^') stNum.push(pow(frsOp, secOp));
+			}
+			stChar.push(tmp[i]);
+		}
+		else if (tmp[i] >= '0' && tmp[i] <= '9' || tmp[i] == '.') {
+			size_t idx;
+			double res = stod(&tmp[i], &idx);
+			stNum.push(res);
+			i += idx - 1;
+		}
+		else if (tmp[i] == ')') {
+			while (stChar.top() != '(') {
+				char a = stChar.pop();
+				double secOp = stNum.pop();
+				double frsOp = stNum.pop();
+				if (a == '+') stNum.push(secOp + frsOp);
+				else if (a == '-') stNum.push(frsOp - secOp);
+				else if (a == '*') stNum.push(secOp * frsOp);
+				else if (a == '/') stNum.push(frsOp / secOp);
+				else if (a == '^') stNum.push(pow(frsOp, secOp));
+			}
+			stChar.pop();
+		}
+	}
+	double res = stNum.pop();
+	if (!stNum.isEmpty()) throw "Num is not empty";
+	return res;
+}
 double TCalc::CalcPostfix() {
 	stNum.clear();
 	for (int i = 0; i < postfix.size(); i++) {
-		if (postfix[i] >= '0' && postfix[i] <= '9' || postfix[i] == '.') {
+		if (postfix[i] >= '0' && postfix[i] <= '9' || postfix[i] == '.'
+			|| postfix[i] == '-' && postfix[i+1] >= '0' && postfix[i+1] <= '9') {
 			size_t idx;
 			double tmp = stod(&postfix[i], &idx);
 			stNum.push(tmp);
@@ -19,6 +72,7 @@ double TCalc::CalcPostfix() {
 				stNum.push(firstOp + secondOp);
 				break;
 			case '-':
+				if (postfix[i + 1] >= '0' && postfix[i + 1] <= '9') break;
 				stNum.push(firstOp - secondOp);
 				break;
 			case '*':
@@ -64,6 +118,12 @@ void TCalc::toPostfix() {
 		switch (tmp[i]) {
 		case '(': 
 			stChar.push('(');
+			if (tmp[i + 1] == '-') {
+				size_t idx;
+				double res = stod(&tmp[i + 1], &idx);
+				postfix += to_string(res);
+				i += idx;
+			}
 			break;
 		case '-': case '+': case '*': case '/': case '^': 
 			postfix += ' ';

@@ -6,9 +6,10 @@ using namespace std;
 int main() {
 	TStack<double> stack(10);
 	TCalc calc;
-	calc.setInfix("1 + 2 + 3 )");
+	calc.setInfix("3.3 - 8/2^(-2)");
 	calc.toPostfix();
 	cout << calc.getPostfix() << endl << calc.CalcPostfix() << endl;
+	cout << calc.Calc();
 	//calc.setInfix("(((1 / 2 * 3) / 4 - 5) + 6) / 7");
 	//calc.toPostfix();
 	//cout << calc.getPostfix() << endl << calc.CalcPostfix() << " " << 0.19642857142 << endl;
