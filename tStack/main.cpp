@@ -25,7 +25,7 @@ int main() {
 	cout << calc.getPostfix();
 	cout << endl << calc.CalcPostfix();
 	try {
-		calc.setInfix("sin(-95) - 5");
+		calc.setInfix("sin((-1))");
 		cout << calc.Calc();
 	}
 	catch (string e) { cout << "error" << endl << e; }
