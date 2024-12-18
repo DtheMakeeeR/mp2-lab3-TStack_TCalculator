@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "TStack.h"
+#include "../TList/LStack.h"
 enum Opers{
 	eadd = '+',
 	esub = '-',
@@ -15,11 +16,11 @@ enum Opers{
 class TCalc {
 	std::string infix;
 	std::string postfix;
-	TStack<double> stNum;
-	TStack<Opers> stOpers;
+	LStack<double> stNum;
+	LStack<Opers> stOpers;
 	int prior(Opers op);
 public:
-	TCalc(std::string inf = "") : infix(inf), stNum(50), stOpers(50) {}
+	TCalc(std::string inf = "") : infix(inf), stNum(LStack<double>()), stOpers(LStack<Opers>()) {}
 	bool check(std::string str);
 	void setInfix(std::string input);
 	std::string getInfix() { return infix; }

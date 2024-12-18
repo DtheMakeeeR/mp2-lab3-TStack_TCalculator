@@ -2,47 +2,47 @@
 #include "TStack.h"
 #include <math.h>
 double TCalc::Calc() {
-	stNum.clear();
-	stOpers.clear();
+	stNum.Clear();
+	stOpers.Clear();
 	std::string tmp = '(' + infix + ')';
 	for (int i = 0; i < tmp.size(); i++) {
 		switch (tmp[i]) {
 		case '(':
-			stOpers.push(eleftbracket);
+			stOpers.Push(eleftbracket);
 
 			if (tmp[i + 1] == '-') {
 				if (tmp[i + 2] == '(') {
-					stOpers.push(eminusbracket);
+					stOpers.Push(eminusbracket);
 					i += 2;
 				}
 				else {
 					size_t idx;
 					double res = std::stod(&tmp[i + 1], &idx);
-					stNum.push(res);
+					stNum.Push(res);
 					i += idx;
 				}				
 			}			
 			break;
 		case 's':
 			if (tmp[i + 1] == 'i' && tmp[i + 2] == 'n' && tmp[i + 3] == '(') {
-				stOpers.push(esin);
+				stOpers.Push(esin);
 				i += 3;
 				if (tmp[i + 1] == '-') {
 					size_t idx;
 					double res = std::stod(&tmp[i + 1], &idx);
-					stNum.push(res);
+					stNum.Push(res);
 					i += idx;
 				}
 			}
 			break;
 		case 'c':
 			if (tmp[i + 1] == 'o' && tmp[i + 2] == 's' && tmp[i + 3] == '(') {
-				stOpers.push(ecos);
+				stOpers.Push(ecos);
 				i += 3;
 				if (tmp[i + 1] == '-') {
 					size_t idx;
 					double res = std::stod(&tmp[i + 1], &idx);
-					stNum.push(res);
+					stNum.Push(res);
 					i += idx;
 				}
 			}
@@ -50,137 +50,137 @@ double TCalc::Calc() {
 		case '+': case '-': case '*': case '/': case '^':
 		{
 			Opers a = Opers(tmp[i]);
-			while (prior(stOpers.top()) >= prior(a)) {
-				Opers b = stOpers.pop();
-				double secOp = stNum.pop();
-				double frsOp = stNum.pop();
+			while (prior(stOpers.Peek()) >= prior(a)) {
+				Opers b = stOpers.Pop();
+				double secOp = stNum.Pop();
+				double frsOp = stNum.Pop();
 				switch (b) {
-				case eadd: stNum.push(frsOp + secOp); break;
-				case esub: stNum.push(frsOp - secOp); break;
-				case emul: stNum.push(frsOp * secOp); break;
-				case ediv: if (secOp == 0.0) throw -1; stNum.push(frsOp / secOp); break;
-				case epow: stNum.push(pow(frsOp, secOp)); break;
+				case eadd: stNum.Push(frsOp + secOp); break;
+				case esub: stNum.Push(frsOp - secOp); break;
+				case emul: stNum.Push(frsOp * secOp); break;
+				case ediv: if (secOp == 0.0) throw -1; stNum.Push(frsOp / secOp); break;
+				case epow: stNum.Push(pow(frsOp, secOp)); break;
 				}
 			}
-			stOpers.push(a);
+			stOpers.Push(a);
 			break;
 		}
 		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9': case '.':
 		{
 			size_t idx;
 			double res = std::stod(&tmp[i], &idx);
-			stNum.push(res);
+			stNum.Push(res);
 			i += idx - 1;
 			break;
 		}
 		case ')':
-			while (!(stOpers.top() == eminusbracket || stOpers.top() == ecos ||
-				stOpers.top() == esin || stOpers.top() == eleftbracket)) {
+			while (!(stOpers.Peek() == eminusbracket || stOpers.Peek() == ecos ||
+				stOpers.Peek() == esin || stOpers.Peek() == eleftbracket)) {
 				
-				switch (stOpers.pop()) {
+				switch (stOpers.Pop()) {
 				case eadd: {
-					double secOp = stNum.pop();
-					double frsOp = stNum.pop();
-					stNum.push(frsOp + secOp);
+					double secOp = stNum.Pop();
+					double frsOp = stNum.Pop();
+					stNum.Push(frsOp + secOp);
 					break;
 				}
 				case esub: {
-					double secOp = stNum.pop();
-					double frsOp = stNum.pop();
-					stNum.push(frsOp - secOp);
+					double secOp = stNum.Pop();
+					double frsOp = stNum.Pop();
+					stNum.Push(frsOp - secOp);
 					break;
 				}
 				case emul: {
-					double secOp = stNum.pop();
-					double frsOp = stNum.pop();
-					stNum.push(frsOp * secOp);
+					double secOp = stNum.Pop();
+					double frsOp = stNum.Pop();
+					stNum.Push(frsOp * secOp);
 					break;
 
 				}
 				case ediv: {
-					double secOp = stNum.pop();
-					double frsOp = stNum.pop();
+					double secOp = stNum.Pop();
+					double frsOp = stNum.Pop();
 					if (secOp == 0.0) throw - 1;
-					stNum.push(frsOp / secOp);
+					stNum.Push(frsOp / secOp);
 					break;
 				}
 				case epow: {
-					double secOp = stNum.pop();
-					double frsOp = stNum.pop();
-					stNum.push(pow(frsOp, secOp));
+					double secOp = stNum.Pop();
+					double frsOp = stNum.Pop();
+					stNum.Push(pow(frsOp, secOp));
 					break;
 				}
 				}				
 			}
-			switch (stOpers.pop())
+			switch (stOpers.Pop())
 			{
 			case eleftbracket:
 				break;
 			case esin:
-				stNum.push(sin(stNum.pop()));
+				stNum.Push(sin(stNum.Pop()));
 				break;
 			case ecos:
-				stNum.push(cos(stNum.pop()));
+				stNum.Push(cos(stNum.Pop()));
 				break;
 			case eminusbracket:
-				stNum.push(-stNum.pop());
+				stNum.Push(-stNum.Pop());
 				break;
 			}
 		
 		}
 	}
-	double res = stNum.pop();
-	if (!stNum.isEmpty()) {
+	double res = stNum.Pop();
+	if (!stNum.IsEmpty()) {
 		std::string err = "Num is not empty";
 		throw err;
 	}
 	return res;
 }
 double TCalc::CalcPostfix() {
-	stNum.clear();
+	stNum.Clear();
 	for (int i = 0; i < postfix.size(); i++) {
 		if (postfix[i] >= '0' && postfix[i] <= '9' || postfix[i] == '.'
 			|| postfix[i] == '-' && postfix[i + 1] >= '0' && postfix[i + 1] <= '9') {
 			size_t idx;
 			double tmp = std::stod(&postfix[i], &idx);
-			stNum.push(tmp);
+			stNum.Push(tmp);
 			i += idx - 1;
 		}
 		else if (postfix[i] == '+' || postfix[i] == '-' ||
 			postfix[i] == '*' || postfix[i] == '/' || postfix[i] == '^') {
-			double secondOp = stNum.pop();
-			double firstOp = stNum.pop();
+			double secondOp = stNum.Pop();
+			double firstOp = stNum.Pop();
 			switch (postfix[i]) {
 			case '+':
-				stNum.push(firstOp + secondOp);
+				stNum.Push(firstOp + secondOp);
 				break;
 			case '-':
 				if (postfix[i + 1] >= '0' && postfix[i + 1] <= '9') break;
-				stNum.push(firstOp - secondOp);
+				stNum.Push(firstOp - secondOp);
 				break;
 			case '*':
-				stNum.push(firstOp * secondOp);
+				stNum.Push(firstOp * secondOp);
 				break;
 			case '/':
 				if (secondOp == 0.0) throw - 1;
-				stNum.push(firstOp / secondOp);
+				stNum.Push(firstOp / secondOp);
 				break;
 			case '^':
-				stNum.push(pow(firstOp, secondOp));
+				stNum.Push(pow(firstOp, secondOp));
 				break;
 			}
 		}
 		else if (postfix[i] == 'c') {
-			stNum.push(cos(stNum.pop()));
+			stNum.Push(cos(stNum.Pop()));
 			i += 2;
 		}
 		else if (postfix[i] == 's') {
-			stNum.push(sin(stNum.pop()));
+			stNum.Push(sin(stNum.Pop()));
 			i += 2;
 		}
 	}
-	double res = stNum.pop();
-	if (stNum.isEmpty()) return res;
+	double res = stNum.Pop();
+	if (stNum.IsEmpty()) return res;
 	else throw - 1;
 }
 int TCalc :: prior(Opers op) {
@@ -202,21 +202,21 @@ int TCalc :: prior(Opers op) {
 }
 bool TCalc::check(std::string str) {
 	for (int i = 0; i < str.size(); i++) {
-		if (str[i] == '(') stOpers.push(eleftbracket);
-		if (str[i] == ')') if (stOpers.isEmpty()) return false;
-		else stOpers.pop();
+		if (str[i] == '(') stOpers.Push(eleftbracket);
+		if (str[i] == ')') if (stOpers.IsEmpty()) return false;
+		else stOpers.Pop();
 	}
-	if (!(stOpers.isEmpty())) return false;
+	if (!(stOpers.IsEmpty())) return false;
 	return true;
 }
 void TCalc::toPostfix() {
 	postfix = "";
-	stOpers.clear();
+	stOpers.Clear();
 	std::string tmp = "(" + infix + ")";
 	for (int i = 0; i < tmp.size(); i++) {
 		switch (tmp[i]) {
 		case '(': 
-			stOpers.push(eleftbracket);
+			stOpers.Push(eleftbracket);
 			if (tmp[i + 1] == '-') {
 				size_t idx;
 				double res = std::stod(&tmp[i + 1], &idx);
@@ -228,22 +228,22 @@ void TCalc::toPostfix() {
 		{
 			Opers a = Opers(tmp[i]);
 			postfix += ' ';
-			while (prior(stOpers.top()) >= prior(a)) {
-				postfix += stOpers.pop();
+			while (prior(stOpers.Peek()) >= prior(a)) {
+				postfix += stOpers.Pop();
 				postfix += " ";
 			}
-			stOpers.push(a);
+			stOpers.Push(a);
 			break;
 		}
 		case ')':
 			//скобки для инициализации а
 		{
-			while (!(stOpers.top() == eleftbracket || stOpers.top() == esin || stOpers.top() == ecos)) {
+			while (!(stOpers.Peek() == eleftbracket || stOpers.Peek() == esin || stOpers.Peek() == ecos)) {
 				postfix += ' ';
-				postfix += stOpers.pop();
+				postfix += stOpers.Pop();
 				postfix += " ";
 			}
-			switch (stOpers.pop()) {
+			switch (stOpers.Pop()) {
 			case eleftbracket: break;
 			case esin:
 				postfix += " sin ";
@@ -260,7 +260,7 @@ void TCalc::toPostfix() {
 
 		case 's': 
 			if (tmp[i + 1] == 'i' && tmp[i + 2] == 'n' && tmp[i + 3] == '(') {
-				stOpers.push(esin);
+				stOpers.Push(esin);
 			}
 			i += 3;
 			if (tmp[i + 1] == '-') {
@@ -272,7 +272,7 @@ void TCalc::toPostfix() {
 			break;
 		case 'c':
 			if (tmp[i + 1] == 'o' && tmp[i + 2] == 's' && tmp[i + 3] == '(') {
-				stOpers.push(ecos);
+				stOpers.Push(ecos);
 			}
 			i += 3;
 			if (tmp[i + 1] == '-') {
